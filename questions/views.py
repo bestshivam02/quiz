@@ -5,15 +5,53 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 import json
-
+import requests
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 
+def weatherInfo(request):
+    r = requests.get('https://get.geojs.io/')
+    ip_request = requests.get('https://get.geojs.io/v1/ip.json')
+    ipAdd = ip_request.json()['ip']    
+    url = 'https://get.geojs.io/v1/ip/geo/'+ipAdd+'.json'
+    geo_request = requests.get(url)
+    geo_data = geo_request.json()
+    url = 'https://api.openweathermap.org/data/2.5/weather?lat='+geo_data['latitude']+'&lon='+geo_data['longitude']+'&units=imperial&type=accurate&appid=e11862ae7905f24f99e779d8ffeed6c1'
+    report = requests.get(url)
+    wdata = report.json()
+    temp = (wdata['main']['temp'] - 32)* 5/9
+    wind = wdata['wind']
+    name = wdata['name']
+
+
+    
+    print(geo_data['latitude'])
+    print(geo_data['longitude'])
+    data = {'latitude':geo_data['latitude']}
+    payload = {'status': True, 'City' :name, 'temprature' : temp, 'wind' : wind['speed']}
+
+    return JsonResponse(payload)
+
+
 @login_required(login_url='/login')
 def home(request):
-    courses = Course.objects.all()
-    context = {'courses' : courses}
+    current_user = request.user
+    # print current_user.id
+    courses = Quiz.objects.filter(user_id=current_user.id)
+    r = requests.get('https://get.geojs.io/')
+    ip_request = requests.get('https://get.geojs.io/v1/ip.json')
+    ipAdd = ip_request.json()['ip']    
+    url = 'https://get.geojs.io/v1/ip/geo/'+ipAdd+'.json'
+    geo_request = requests.get(url)
+    geo_data = geo_request.json()
+    url = 'https://api.openweathermap.org/data/2.5/weather?lat='+geo_data['latitude']+'&lon='+geo_data['longitude']+'&units=imperial&type=accurate&appid=e11862ae7905f24f99e779d8ffeed6c1'
+    report = requests.get(url)
+    wdata = report.json()
+    temp = (wdata['main']['temp'] - 32)* 5/9
+    wind = wdata['wind']
+    name = wdata['name']
+    context = {'courses' : courses, 'current_user' : current_user, 'City' :name, 'temprature' : temp, 'wind' : wind['speed']}
     return render(request , 'home.html' , context)
     
 

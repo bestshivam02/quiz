@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from .views import *
+from . import views
 
 urlpatterns = [
    path('' , home , name="home"),
@@ -8,6 +9,5 @@ urlpatterns = [
    path('api/check_score' , check_score , name="check_score"),
    path('<id>' , take_quiz , name="take_quiz"),
    path('api/<id>' , api_question , name="api_question"),
-  
-   
+   path('api/get-weatherInfo/' , views.weatherInfo , name = "weatherInfo")  
 ]
