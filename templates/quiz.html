@@ -59,9 +59,10 @@
                     'option': option_index + 1
                 }
                 this.solutions.push(solution)
+                console.log(question_index)
             },
             handleSubmit() {
-        
+                console.log(this.solutions)
                 fetch('/api/check_score', {
                     method: 'POST',
                     headers: {
@@ -88,7 +89,7 @@
             .then(res => res.json())
             .then(result => {
                 this.questions = result
-
+                console.log(result);
             })
 
     }
