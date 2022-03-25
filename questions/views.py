@@ -90,7 +90,7 @@ def view_score(request):
 @login_required(login_url='/login')
 def take_quiz(request , id):
     context = {'id' : id}
-    return render(request , 'quiz2.html'  , context)
+    return render(request , 'quiz.html'  , context)
 
 @csrf_exempt
 @login_required(login_url='/login')
