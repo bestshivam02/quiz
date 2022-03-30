@@ -42,8 +42,17 @@ def home(request):
     courses = Quiz.objects.filter(user_id=current_user.id)
     r = requests.get('https://get.geojs.io/')
     ip_request = requests.get('https://get.geojs.io/v1/ip.json')
-    ipAdd = ip_request.json()['ip']    
-    url = 'https://get.geojs.io/v1/ip/geo/'+ipAdd+'.json'
+    ipAdd = ip_request.json()['ip']
+    ip, is_routable = get_client_ip(request)
+    if ip is None:
+        ip = "0.0.0.0"
+    else:
+        if is_routable:
+            ipv = "Public"
+        else:
+            ipv = "Private"
+    print(ip, ipv)   
+    url = 'https://get.geojs.io/v1/ip/geo/'+ip+'.json'
     geo_request = requests.get(url)
     geo_data = geo_request.json()
     url = 'https://api.openweathermap.org/data/2.5/weather?lat='+geo_data['latitude']+'&lon='+geo_data['longitude']+'&units=imperial&type=accurate&appid=e11862ae7905f24f99e779d8ffeed6c1'
@@ -53,15 +62,7 @@ def home(request):
     wind = wdata['wind'] 
     name = wdata['name']
     # ip = get_client_ip(request)
-    ip, is_routable = get_client_ip(request)
-    if ip is None:
-        ip = "0.0.0.0"
-    else:
-        if is_routable:
-            ipv = "Public"
-        else:
-            ipv = "Private"
-    print(ip, ipv)
+
 
 
     context = {'ip' : ip, 'ipAdd': ipAdd, 'courses' : courses, 'current_user' : current_user, 'City' :name, 'temprature' : temp, 'wind' : wind['speed']}

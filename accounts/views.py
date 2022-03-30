@@ -43,7 +43,10 @@ def register_attempt(request):
         user = User(first_name = f_name , last_name = l_name , email = email , username=email)
         user.set_password(password)
         user.save()
-    
+        message = {'success' : 'user created successfully'}
+        context = message
+        return render(request, 'auth/register.html', context)
+        
     return render(request, 'auth/register.html')
 
 
