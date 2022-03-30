@@ -8,6 +8,7 @@ import json
 import requests
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from ipware import get_client_ip
 
 
 def weatherInfo(request):
@@ -49,9 +50,21 @@ def home(request):
     report = requests.get(url)
     wdata = report.json()
     temp = (wdata['main']['temp'] - 32)* 5/9
-    wind = wdata['wind']
+    wind = wdata['wind'] 
     name = wdata['name']
-    context = {'courses' : courses, 'current_user' : current_user, 'City' :name, 'temprature' : temp, 'wind' : wind['speed']}
+    # ip = get_client_ip(request)
+    ip, is_routable = get_client_ip(request)
+    if ip is None:
+        ip = "0.0.0.0"
+    else:
+        if is_routable:
+            ipv = "Public"
+        else:
+            ipv = "Private"
+    print(ip, ipv)
+
+
+    context = {'ip' : ip, 'ipAdd': ipAdd, 'courses' : courses, 'current_user' : current_user, 'City' :name, 'temprature' : temp, 'wind' : wind['speed']}
     return render(request , 'home.html' , context)
     
 
@@ -90,7 +103,7 @@ def view_score(request):
 @login_required(login_url='/login')
 def take_quiz(request , id):
     context = {'id' : id}
-    return render(request , 'quiz.html'  , context)
+    return render(request , 'quiz2.html'  , context)
 
 @csrf_exempt
 @login_required(login_url='/login')
