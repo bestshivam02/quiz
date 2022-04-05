@@ -1,4 +1,6 @@
 from django.shortcuts import render
+
+from accounts.models import extendedUser
 from .models import *
 from django.http import JsonResponse
 # Create your views here.
@@ -51,8 +53,8 @@ def home(request):
             ipv = "Public"
         else:
             ipv = "Private"
-    print(ip, ipv)   
-    url = 'https://get.geojs.io/v1/ip/geo/'+ip+'.json'
+  
+    url = 'https://get.geojs.io/v1/ip/geo/'+ipAdd+'.json'
     geo_request = requests.get(url)
     geo_data = geo_request.json()
     url = 'https://api.openweathermap.org/data/2.5/weather?lat='+geo_data['latitude']+'&lon='+geo_data['longitude']+'&units=imperial&type=accurate&appid=e11862ae7905f24f99e779d8ffeed6c1'
@@ -62,10 +64,9 @@ def home(request):
     wind = wdata['wind'] 
     name = wdata['name']
     # ip = get_client_ip(request)
+    data = extendedUser.objects.filter(user = request.user)
 
-
-
-    context = {'ip' : ip, 'ipAdd': ipAdd, 'courses' : courses, 'current_user' : current_user, 'City' :name, 'temprature' : temp, 'wind' : wind['speed']}
+    context = {'ip' : ip, 'ipAdd': ipAdd, 'data' : data, 'courses' : courses, 'current_user' : current_user, 'City' :name, 'temprature' : temp, 'wind' : wind['speed']}
     return render(request , 'home.html' , context)
     
 
