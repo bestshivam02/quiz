@@ -6,7 +6,11 @@ from .models import *
 
 admin.site.register(Course)
 admin.site.register(Question)
-admin.site.register(ScoreBoard)
+class ScoreAdmin(admin.ModelAdmin):
+    list_display = ('course', 'user', 'score', 'created_at')
+    list_per_page = 4
+    list_filter = ('user',)
+admin.site.register(ScoreBoard, ScoreAdmin)
 
 class QuizAdmin(admin.ModelAdmin):
     list_display = ('quiz', 'user', 'course')

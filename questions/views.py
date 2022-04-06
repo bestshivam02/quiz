@@ -5,7 +5,7 @@ from .models import *
 from django.http import JsonResponse
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
-
+import datetime
 import json
 import requests
 from django.contrib.auth.decorators import login_required
@@ -54,7 +54,7 @@ def home(request):
         else:
             ipv = "Private"
   
-    url = 'https://get.geojs.io/v1/ip/geo/'+ipAdd+'.json'
+    url = 'https://get.geojs.io/v1/ip/geo/'+ip+'.json'
     geo_request = requests.get(url)
     geo_data = geo_request.json()
     url = 'https://api.openweathermap.org/data/2.5/weather?lat='+geo_data['latitude']+'&lon='+geo_data['longitude']+'&units=imperial&type=accurate&appid=e11862ae7905f24f99e779d8ffeed6c1'
@@ -121,8 +121,8 @@ def check_score(request):
       
         if (question.answer) == solution.get('option'):
             score = score + question.marks
-   
-    score_board = ScoreBoard(course = course , score = score  , user = user)
+    
+    score_board = ScoreBoard(course = course , score = score  , user = user, created_at = datetime.datetime.now().strftime("%B %d,%Y %H:%M:%S"))
     score_board.save() 
     
     return JsonResponse({'message' : 'success' , 'status':True})
